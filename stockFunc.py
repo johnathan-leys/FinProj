@@ -39,17 +39,20 @@ def plot_prices_candle(data):
     df['High'] = df['2. high'].astype(float)
     df['Low'] = df['3. low'].astype(float)
     df['Close'] = df['4. close'].astype(float)
+    df['Volume'] = df['5. volume'].astype(float)
 
     mpf.plot(df, type='candle', title=f'{stock_symbol} Candlestick Chart',
-             ylabel='Price', datetime_format='%H:%M', xrotation=45)
+         ylabel='Price',  xrotation=45,
+        style='yahoo', volume=True, figsize=(12, 8))
+
 
 
 
 if __name__ == '__main__':
     stock_symbol = 'TSLA'  # Test stock symbol
-    interval = '1min'  # Options are: '5min', '15min', '30min', or '60min'
+    interval = '5min'  # Options are: '5min', '15min', '30min', or '60min'
     
     stock_data = get_stock_data(stock_symbol, interval)
-    #plot_prices(stock_data)
+    plot_prices(stock_data)
     plot_prices_candle(stock_data)
     
