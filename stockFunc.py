@@ -36,7 +36,7 @@ def plot_prices(data):      # Basic Matplotlib plot
     plt.grid(True)
     plt.show()
    
-def plot_mplfinance(data, chart_type='candle', **kwargs): # Enhanced mplfinance plot
+def plot_mplfinance(data, stock_symbol, chart_type='candle', **kwargs): # Enhanced mplfinance plot
     df = pd.DataFrame.from_dict(data, orient='index')
     df.index = pd.to_datetime(df.index)
     df['Open'] = df['1. open'].astype(float)
@@ -70,7 +70,7 @@ if __name__ == '__main__':
     interval = '1min'  # Options are: '5min', '15min', '30min', or '60min'
     
     stock_data = get_stock_data(stock_symbol, interval)
-    # plot_prices(stock_data)
+    plot_prices(stock_data)
     plot_mplfinance(stock_data, 'candle', style='nightclouds', mav=(5, 20), volume=True)
 
     if not os.path.exists('DataFiles'):
