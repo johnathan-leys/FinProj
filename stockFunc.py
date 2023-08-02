@@ -78,6 +78,12 @@ def calculate_rsi(data_df, window=10):
 
     return data_df[['Close', 'RSI']]
 
+def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
+    if(filename == 'AllData.csv'):
+        data_df.to_csv('DataFiles/' + stock_symbol + 'AllData.csv')
+    else:
+         data_df.to_csv('DataFiles/' + filename)
+    
 
 #Eventually combine functions into one that adds them all. Can just call them all  and combine
 
