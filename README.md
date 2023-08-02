@@ -9,3 +9,5 @@ This is a personal project I am creating to assist my learning and implement ski
 - Train and implement Neural Net to perform analysis.
 
 I plan to start simple and add each feature as I learn more about the space. Feel free to follow along or play with the project if you find it interesting or useful!
+
+## Dependencies
