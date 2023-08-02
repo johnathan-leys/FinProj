@@ -22,45 +22,64 @@ def get_stock_data(symbol, interval='1min'):
     }
     response = requests.get(ALPHA_URL, params=params)
     data = response.json()
-    return data['Time Series ({})'.format(interval)]
+    data =  data['Time Series ({})'.format(interval)]
+    df_data = pd.DataFrame.from_dict(data, orient='index')
+    df_data.index = pd.to_datetime(df_data.index)
+    return df_data
 
-def plot_prices(data):      # Basic Matplotlib plot
-    df = pd.DataFrame.from_dict(data, orient='index')
-    df.index = pd.to_datetime(df.index)
-    df['4. close'] = df['4. close'].astype(float)
+def plot_prices(data_df):      # Basic Matplotlib plot
+    data_df['4. close'] = data_df['4. close'].astype(float)
     plt.figure(figsize=(12, 6))
-    plt.plot(df.index, df['4. close'])
+    plt.plot(data_df.index, data_df['4. close'])
     plt.xlabel('Time')
     plt.ylabel('Stock Price')
     plt.title('Stock Price: ' + stock_symbol)
     plt.grid(True)
     plt.show()
    
-def plot_mplfinance(data, stock_symbol, chart_type='candle', **kwargs): # Enhanced mplfinance plot
-    df = pd.DataFrame.from_dict(data, orient='index')
-    df.index = pd.to_datetime(df.index)
-    df['Open'] = df['1. open'].astype(float)
-    df['High'] = df['2. high'].astype(float)
-    df['Low'] = df['3. low'].astype(float)
-    df['Close'] = df['4. close'].astype(float)
-    df['Volume'] = df['5. volume'].astype(float)
+def plot_mplfinance(data_df, stock_symbol, chart_type='candle', **kwargs): # Enhanced mplfinance plot
+    data_df['Open'] = data_df['1. open'].astype(float)
+    data_df['High'] = data_df['2. high'].astype(float)
+    data_df['Low'] = data_df['3. low'].astype(float)
+    data_df['Close'] = data_df['4. close'].astype(float)
+    data_df['Volume'] = data_df['5. volume'].astype(float)
 
     # Create the plot with additional customization options
-    mpf.plot(df, type=chart_type, title=f'{stock_symbol} {chart_type.capitalize()} Chart',
+    mpf.plot(data_df, type=chart_type, title=f'{stock_symbol} {chart_type} Chart',
              ylabel='Price', datetime_format='%H:%M', xrotation=45, **kwargs)
     
-def calculate_volatility(data, window=15):
-    df = pd.DataFrame.from_dict(data, orient='index')
-    df.index = pd.to_datetime(df.index)
-    df['Close'] = df['4. close'].astype(float)
+def calculate_volatility(data_df, window=15):
+    data_df['Close'] = data_df['4. close'].astype(float)
     
     # Calculate daily returns
-    df['Returns'] = df['Close'].pct_change()
+    data_df['Returns'] = data_df['Close'].pct_change()
 
     # Calculate rolling volatility (standard deviation of daily returns)
-    df['Volatility'] = df['Returns'].rolling(window=window).std() * np.sqrt(window)
+    data_df['Volatility'] =data_df['Returns'].rolling(window=window).std() * np.sqrt(window)
     
-    return df[['Close', 'Volatility']]
+    return data_df[['Close', 'Volatility']]
+
+def calculate_rsi(data_df, window=10):
+    data_df['Close'] = data_df['4. close'].astype(float)
+
+    # Calculate daily returns and gains/losses
+    data_df['Returns'] = data_df['Close'].diff()
+    data_df['Gains'] = np.where(data_df['Returns'] > 0, data_df['Returns'], 0)
+    data_df['Losses'] = np.where(data_df['Returns'] < 0, abs(data_df['Returns']), 0)
+
+    # Calculate average gains and losses using window period
+    avg_gains = data_df['Gains'].rolling(window=window).mean()
+    avg_losses = data_df['Losses'].rolling(window=window).mean()
+
+    # Calculate RSI
+    rs = avg_gains / avg_losses
+    rsi = 100 - (100 / (1 + rs))
+    data_df['RSI'] = rsi
+
+    return data_df[['Close', 'RSI']]
+
+
+#Eventually combine functions into one that adds them all. Can just call them all  and combine
 
 
 
