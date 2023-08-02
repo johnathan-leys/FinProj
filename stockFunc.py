@@ -1,7 +1,11 @@
+# This file contains some basic functions to be performed on stock data
+
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import mplfinance as mpf
+import numpy as np
+import os
 
 # If you clone this repo, be sure to update the location of your own API key
 with open(".APIkeys", 'r') as file:
@@ -31,20 +35,7 @@ def plot_prices(data):      # Basic Matplotlib plot
     plt.title('Stock Price: ' + stock_symbol)
     plt.grid(True)
     plt.show()
-
-def plot_prices_candle(data):  
-    df = pd.DataFrame.from_dict(data, orient='index')
-    df.index = pd.to_datetime(df.index)
-    df['Open'] = df['1. open'].astype(float)
-    df['High'] = df['2. high'].astype(float)
-    df['Low'] = df['3. low'].astype(float)
-    df['Close'] = df['4. close'].astype(float)
-    df['Volume'] = df['5. volume'].astype(float)
-
-    mpf.plot(df, type='candle', title=f'{stock_symbol} Candlestick Chart',
-         ylabel='Price',  xrotation=45,
-        style='yahoo', volume=True, figsize=(12, 8))
-    
+   
 def plot_mplfinance(data, chart_type='candle', **kwargs): # Enhanced mplfinance plot
     df = pd.DataFrame.from_dict(data, orient='index')
     df.index = pd.to_datetime(df.index)
@@ -57,6 +48,19 @@ def plot_mplfinance(data, chart_type='candle', **kwargs): # Enhanced mplfinance 
     # Create the plot with additional customization options
     mpf.plot(df, type=chart_type, title=f'{stock_symbol} {chart_type.capitalize()} Chart',
              ylabel='Price', datetime_format='%H:%M', xrotation=45, **kwargs)
+    
+def calculate_volatility(data, window=15):
+    df = pd.DataFrame.from_dict(data, orient='index')
+    df.index = pd.to_datetime(df.index)
+    df['Close'] = df['4. close'].astype(float)
+    
+    # Calculate daily returns
+    df['Returns'] = df['Close'].pct_change()
+
+    # Calculate rolling volatility (standard deviation of daily returns)
+    df['Volatility'] = df['Returns'].rolling(window=window).std() * np.sqrt(window)
+    
+    return df[['Close', 'Volatility']]
 
 
 
@@ -68,4 +72,8 @@ if __name__ == '__main__':
     stock_data = get_stock_data(stock_symbol, interval)
     # plot_prices(stock_data)
     plot_mplfinance(stock_data, 'candle', style='nightclouds', mav=(5, 20), volume=True)
+
+    if not os.path.exists('DataFiles'):
+        os.makedirs('DataFiles')
+    calculate_volatility(stock_data).to_csv('DataFiles/' + stock_symbol + 'Volatility.csv')
     

@@ -11,3 +11,7 @@ This is a personal project I am creating to assist my learning and implement ski
 I plan to start simple and add each feature as I learn more about the space. Feel free to follow along or play with the project if you find it interesting or useful!
 
 ## Dependencies
+
+## Next Features
+-Reorganize, use new main function to call stockfunc,  add a alphavantage file to hold that stuff
+-Alphavantage functions should converte data to dataframes in functions, should make verything consistent so it isnt needed to be done in plot functions
