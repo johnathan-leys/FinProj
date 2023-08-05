@@ -90,19 +90,26 @@ def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
     else:
          data_df.to_csv('DataFiles/' + filename)
     
-# Daily Price Change Distribution
-def daily_pcd(df):
-    # Remove the first row (NaN) after calculating returns
-    df = df.dropna()
+# Daily Price Change Histogram. Reccomonede to use over longer periods of time, as of right now API
+# can call up to 60min intervals. Plan is to incorporate daily data eventually
+def daily_pcd(df_data):
+    # Resample the DataFrame to daily frequency and forward-fill any missing values
+    daily_dataframe = df_data.resample('D').last()
 
-    # Plot the histogram of daily returns
+    # Calculate the daily returns using the 'Close' column
+    daily_dataframe['Daily Returns'] = daily_dataframe['Close'].pct_change()
+
+    # Plot the histogram of daily returns (including NaN values for the first entry of each day)
     plt.figure(figsize=(10, 6))
-    plt.hist(df['Returns'], bins=30, edgecolor='black')
+    plt.hist(daily_dataframe['Daily Returns'], bins=30, edgecolor='black')
     plt.title('Daily Price Change Distribution')
     plt.xlabel('Daily Returns')
     plt.ylabel('Frequency')
     plt.grid(True)
     plt.show()
+    
+    return daily_dataframe
+
 
 
 if __name__ == '__main__':
