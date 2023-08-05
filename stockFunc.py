@@ -47,8 +47,10 @@ def plot_mplfinance(data_df, stock_symbol, chart_type='candle', **kwargs): # Enh
     # Create the plot with additional customization options
     mpf.plot(data_df, type=chart_type, title=f'{stock_symbol} {chart_type.capitalize()} Chart',
              ylabel='Price', datetime_format='%H:%M', xrotation=45, **kwargs)
-    
-def calculate_volatility(data_df, window=15):
+
+# Calculates volatility 
+# Inputs: dataframe, size of window to analyze, bool to include all original columns in return
+def calculate_volatility(data_df, window= 15, include_all=False):
     data_df['Close'] = data_df['4. close'].astype(float)
     
     # Calculate daily returns
@@ -56,10 +58,14 @@ def calculate_volatility(data_df, window=15):
 
     # Calculate rolling volatility (standard deviation of daily returns)
     data_df['Volatility'] =data_df['Returns'].rolling(window=window).std() * np.sqrt(window)
-    
-    return data_df[['Close', 'Volatility']]
 
-def calculate_rsi(data_df, window=10):
+    if include_all:
+        return data_df
+    else:
+        return data_df[['Close', 'Volatility']]
+
+# Adds RSI field to input dataframe
+def calculate_rsi(data_df, window=10, include_all=False):
     data_df['Close'] = data_df['4. close'].astype(float)
 
     # Calculate daily returns and gains/losses
@@ -75,8 +81,10 @@ def calculate_rsi(data_df, window=10):
     rs = avg_gains / avg_losses
     rsi = 100 - (100 / (1 + rs))
     data_df['RSI'] = rsi
-
-    return data_df[['Close', 'RSI']]
+    if include_all:
+        return data_df
+    else:
+        return data_df[['Close', 'RSI']]
 
 def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
     if(filename == 'AllData.csv'):
