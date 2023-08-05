@@ -25,6 +25,11 @@ def get_stock_data(symbol, interval='1min'):
     data =  data['Time Series ({})'.format(interval)]
     df_data = pd.DataFrame.from_dict(data, orient='index')
     df_data.index = pd.to_datetime(df_data.index)
+
+    # Rename to work with mplf
+    df_data.rename(columns={'1. open': 'Open', '2. high': 'High', '3. low': 'Low', '4. close': 'Close', '5. volume': 'Volume'}, inplace=True)
+    df_data = df_data.astype(float)
+
     return df_data
 
 def plot_prices(data_df):      # Basic Matplotlib plot
@@ -38,11 +43,7 @@ def plot_prices(data_df):      # Basic Matplotlib plot
     plt.show()
    
 def plot_mplfinance(data_df, stock_symbol, chart_type='candle', **kwargs): # Enhanced mplfinance plot
-    data_df['Open'] = data_df['1. open'].astype(float)
-    data_df['High'] = data_df['2. high'].astype(float)
-    data_df['Low'] = data_df['3. low'].astype(float)
-    data_df['Close'] = data_df['4. close'].astype(float)
-    data_df['Volume'] = data_df['5. volume'].astype(float)
+
 
     # Create the plot with additional customization options
     mpf.plot(data_df, type=chart_type, title=f'{stock_symbol} {chart_type.capitalize()} Chart',
@@ -50,30 +51,25 @@ def plot_mplfinance(data_df, stock_symbol, chart_type='candle', **kwargs): # Enh
 
 # Calculates volatility 
 # Inputs: dataframe, size of window to analyze, bool to include all original columns in return
-def calculate_volatility(data_df, window= 15, include_all=False):
-    data_df['Close'] = data_df['4. close'].astype(float)
-    
+def calculate_volatility(data_df, window= 15):
+   
     # Calculate daily returns
     data_df['Returns'] = data_df['Close'].pct_change()
 
     # Calculate rolling volatility (standard deviation of daily returns)
     data_df['Volatility'] =data_df['Returns'].rolling(window=window).std() * np.sqrt(window)
 
-    if include_all:
-        return data_df
-    else:
-        return data_df[['Close', 'Volatility']]
+    return data_df[['Close', 'Volatility']]
 
 # Adds RSI field to input dataframe
-def calculate_rsi(data_df, window=10, include_all=False):
-    data_df['Close'] = data_df['4. close'].astype(float)
+def calculate_rsi(data_df, window=10):
 
-    # Calculate daily returns and gains/losses
+    # Calculate daily returns, gains/losses
     data_df['Returns'] = data_df['Close'].diff()
     data_df['Gains'] = np.where(data_df['Returns'] > 0, data_df['Returns'], 0)
     data_df['Losses'] = np.where(data_df['Returns'] < 0, abs(data_df['Returns']), 0)
 
-    # Calculate average gains and losses using window period
+    # Calculate average gains and losses
     avg_gains = data_df['Gains'].rolling(window=window).mean()
     avg_losses = data_df['Losses'].rolling(window=window).mean()
 
@@ -81,10 +77,12 @@ def calculate_rsi(data_df, window=10, include_all=False):
     rs = avg_gains / avg_losses
     rsi = 100 - (100 / (1 + rs))
     data_df['RSI'] = rsi
-    if include_all:
-        return data_df
-    else:
-        return data_df[['Close', 'RSI']]
+
+    # Remove the unneeded gains/losses columns
+    data_df.drop('Gains', axis=1, inplace=True)
+    data_df.drop('Losses', axis=1, inplace=True)
+
+    return data_df[['Close', 'RSI']] # Return just the neede fields
 
 def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
     if(filename == 'AllData.csv'):
@@ -92,10 +90,19 @@ def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
     else:
          data_df.to_csv('DataFiles/' + filename)
     
+# Daily Price Change Distribution
+def daily_pcd(df):
+    # Remove the first row (NaN) after calculating returns
+    df = df.dropna()
 
-#Eventually combine functions into one that adds them all. Can just call them all  and combine
-
-
+    # Plot the histogram of daily returns
+    plt.figure(figsize=(10, 6))
+    plt.hist(df['Returns'], bins=30, edgecolor='black')
+    plt.title('Daily Price Change Distribution')
+    plt.xlabel('Daily Returns')
+    plt.ylabel('Frequency')
+    plt.grid(True)
+    plt.show()
 
 
 if __name__ == '__main__':
