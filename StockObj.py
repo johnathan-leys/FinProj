@@ -52,7 +52,7 @@ class StockData:
     def plot_mplfinance(self, chart_type='candle', **kwargs): # Enhanced mplfinance plot
         # Create the plot with additional customization options
         mpf.plot(self.data, type=chart_type, title=f'{self.symbol} {chart_type.capitalize()} Chart',
-             ylabel='Price', datetime_format='%H:%M', xrotation=45, **kwargs)
+             ylabel='Price',  xrotation=45, **kwargs)
 
     def calculate_volatility(self, window= 15):
         # Calculate returns
