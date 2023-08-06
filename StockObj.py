@@ -84,6 +84,25 @@ class StockData:
         self.data.drop('Losses', axis=1, inplace=True)
 
         return self.data[['Close', 'RSI']] # Return just the RSI fields
+    
+    # Plots a histogram of Daily Price Change Distribution
+    def daily_pcd(self):
+        # Resample the DataFrame to daily if it is not already
+        daily_dataframe = self.data.resample('D').last()
+
+        # Calculate the daily returns using the 'Close' column
+        daily_dataframe['Daily Returns'] = daily_dataframe['Close'].pct_change()
+
+        # Plot the histogram of daily returns
+        plt.figure(figsize=(10, 6))
+        plt.hist(daily_dataframe['Daily Returns'], bins=30, edgecolor='black')
+        plt.title('Daily Price Change Distribution')
+        plt.xlabel('Daily Returns')
+        plt.ylabel('Frequency')
+        plt.grid(True)
+        plt.show()
+        
+        return daily_dataframe
 
     def df_to_csv(self, filename='AllData.csv'):
         if(filename == 'AllData.csv'):
@@ -108,6 +127,8 @@ if __name__ == '__main__':
     Apple_Obj.calculate_rsi()
 
     Apple_Obj.df_to_csv()
+
+    Apple_Obj.daily_pcd()
 
     print(Apple_Obj.data)
 
