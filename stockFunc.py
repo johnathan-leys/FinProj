@@ -32,6 +32,34 @@ def get_stock_data(symbol, interval='1min'):
 
     return df_data
 
+def get_stock_data_daily(symbol):
+    with open(".APIkeys", 'r') as file:
+        API_KEY = file.readline().strip().split()[0]
+
+    ALPHA_URL = 'https://www.alphavantage.co/query'
+
+    params = {
+        'function': 'TIME_SERIES_DAILY',
+        'symbol': symbol,
+        'apikey': API_KEY
+    }
+    response = requests.get(ALPHA_URL, params=params)
+    data = response.json()
+
+
+    # Convert the data to a DataFrame
+    df = pd.DataFrame.from_dict(data['Time Series (Daily)'], orient='index')
+    df.index = pd.to_datetime(df.index)
+    df.columns = [col.split()[-1] for col in df.columns]
+
+    # Convert the columns to numeric
+    df = df.apply(pd.to_numeric)
+
+    # Rename to work with mplf
+    df.rename(columns={'open': 'Open', 'high': 'High', 'low': 'Low', 'close': 'Close', 'volume': 'Volume'}, inplace=True)
+
+    return df
+
 def plot_prices(data_df):      # Basic Matplotlib plot
     data_df['4. close'] = data_df['4. close'].astype(float)
     plt.figure(figsize=(12, 6))
@@ -50,10 +78,9 @@ def plot_mplfinance(data_df, stock_symbol, chart_type='candle', **kwargs): # Enh
              ylabel='Price', datetime_format='%H:%M', xrotation=45, **kwargs)
 
 # Calculates volatility 
-# Inputs: dataframe, size of window to analyze, bool to include all original columns in return
 def calculate_volatility(data_df, window= 15):
    
-    # Calculate daily returns
+    # Calculate returns
     data_df['Returns'] = data_df['Close'].pct_change()
 
     # Calculate rolling volatility (standard deviation of daily returns)
@@ -90,10 +117,9 @@ def df_to_csv(data_df, stock_symbol, filename='AllData.csv'):
     else:
          data_df.to_csv('DataFiles/' + filename)
     
-# Daily Price Change Histogram. Reccomonede to use over longer periods of time, as of right now API
-# can call up to 60min intervals. Plan is to incorporate daily data eventually
+# Daily Price Change Histogram. Reccomonded to use over longer periods of time
 def daily_pcd(df_data):
-    # Resample the DataFrame to daily
+    # Resample the DataFrame to daily if it is not already
     daily_dataframe = df_data.resample('D').last()
 
     # Calculate the daily returns using the 'Close' column
@@ -109,8 +135,6 @@ def daily_pcd(df_data):
     plt.show()
     
     return daily_dataframe
-
-
 
 if __name__ == '__main__':
     stock_symbol = 'TSLA'  # Test stock symbol
