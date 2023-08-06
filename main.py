@@ -1,4 +1,3 @@
-from stockFunc import *
 from StockObj import *
 
 with open(".APIkeys", 'r') as file:
@@ -14,7 +13,6 @@ SPY.calculate_volatility()
 SPY.calculate_rsi()
 SPY.df_to_csv()
 SPY.daily_pcd()
-print(SPY.data)
 
 # Testing with 1min interval QQQ
 stock_symbol = 'QQQ' 
@@ -27,7 +25,6 @@ QQQ.calculate_volatility()
 QQQ.calculate_rsi()
 QQQ.df_to_csv()
 QQQ.daily_pcd()
-print(QQQ.data)
 
 
 
