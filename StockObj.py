@@ -89,6 +89,10 @@ class StockData:
     def daily_pcd(self):
         # Resample the DataFrame to daily if it is not already
         daily_dataframe = self.data.resample('D').last()
+        # Ensure more than one date is provided
+        if(len(daily_dataframe) <= 1):              
+            print('Not enough dates in data provided, check your interval')
+            return
 
         # Calculate the daily returns using the 'Close' column
         daily_dataframe['Daily Returns'] = daily_dataframe['Close'].pct_change()
@@ -96,7 +100,7 @@ class StockData:
         # Plot the histogram of daily returns
         plt.figure(figsize=(10, 6))
         plt.hist(daily_dataframe['Daily Returns'], bins=30, edgecolor='black')
-        plt.title('Daily Price Change Distribution')
+        plt.title('Daily Price Change Distribution: ' + self.symbol)
         plt.xlabel('Daily Returns')
         plt.ylabel('Frequency')
         plt.grid(True)
@@ -105,6 +109,9 @@ class StockData:
         return daily_dataframe
 
     def df_to_csv(self, filename='AllData.csv'):
+        if not os.path.exists('DataFiles'): #Create dir to store output data if does not exist
+            os.makedirs('DataFiles')
+
         if(filename == 'AllData.csv'):
             self.data.to_csv('DataFiles/' + self.symbol + 'AllData.csv')
         else:
@@ -118,19 +125,19 @@ if __name__ == '__main__':
 
     stock_symbol = 'AAPL'  
     
-    Apple_Obj = StockData(API_KEY, stock_symbol)
-    Apple_Obj.get_stock_data()
+    SPY = StockData(API_KEY, stock_symbol)
+    SPY.get_stock_data()
    
-    Apple_Obj.plot_prices()
-    Apple_Obj.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
-    Apple_Obj.calculate_volatility()
-    Apple_Obj.calculate_rsi()
+    SPY.plot_prices()
+    SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
+    SPY.calculate_volatility()
+    SPY.calculate_rsi()
 
-    Apple_Obj.df_to_csv()
+    SPY.df_to_csv()
 
-    Apple_Obj.daily_pcd()
+    SPY.daily_pcd()
 
-    print(Apple_Obj.data)
+    print(SPY.data)
 
 
 

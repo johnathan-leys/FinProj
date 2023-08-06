@@ -1,22 +1,33 @@
 from stockFunc import *
+from StockObj import *
 
-stock_symbol = 'SPY'  # Test stock symbol
-interval = '1min'  # Options are: '5min', '15min', '30min', or '60min'
+with open(".APIkeys", 'r') as file:
+        API_KEY = file.readline().strip().split()[0]
 
-stock_data = get_stock_data(stock_symbol, interval)
-daily_data = get_stock_data_daily(stock_symbol)
+# Testing with Daily SPY
+stock_symbol = 'SPY'   
+SPY = StockData(API_KEY, stock_symbol)
+SPY.get_stock_data()
+SPY.plot_prices()
+SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
+SPY.calculate_volatility()
+SPY.calculate_rsi()
+SPY.df_to_csv()
+SPY.daily_pcd()
+print(SPY.data)
 
-plot_mplfinance(stock_data, stock_symbol, style='nightclouds', mav=(5, 20), volume=True)
-
-if not os.path.exists('DataFiles'):
-     os.makedirs('DataFiles')
-calculate_volatility(daily_data).to_csv('DataFiles/' + stock_symbol + 'Volatility.csv')
-calculate_rsi(daily_data, 14).to_csv('DataFiles/' + stock_symbol + 'RSI.csv')
-
-df_to_csv(daily_pcd(daily_data), stock_symbol, 'PCDHist.csv')
-
-df_to_csv(stock_data, stock_symbol)
-df_to_csv(daily_data, stock_symbol)
+# Testing with 1min interval QQQ
+stock_symbol = 'QQQ' 
+interval = '1min'  
+QQQ = StockData(API_KEY, stock_symbol, interval)
+QQQ.get_stock_data()
+QQQ.plot_prices()
+QQQ.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
+QQQ.calculate_volatility()
+QQQ.calculate_rsi()
+QQQ.df_to_csv()
+QQQ.daily_pcd()
+print(QQQ.data)
 
 
 

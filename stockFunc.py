@@ -7,6 +7,10 @@ import mplfinance as mpf
 import numpy as np
 import os
 
+
+"""
+Most of below code is deprecated, project has been updated to use OOP functions in StockObj.py
+"""
 # If you clone this repo, be sure to update the location of your own API key
 with open(".APIkeys", 'r') as file:
     API_KEY = file.readline().strip().split()[0]
