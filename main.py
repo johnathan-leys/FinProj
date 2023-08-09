@@ -14,8 +14,8 @@ SPY.calculate_rsi()
 SPY.df_to_csv()
 SPY.daily_pcd()
 SPY.plot_bollinger_bands()
-print(SPY.data)
 SPY.mplf_plot_bollinger_bands()
+SPY.df_to_csv()
 print(SPY.data)
 
 # Testing with 1min interval QQQ
@@ -27,6 +27,8 @@ QQQ.plot_prices()
 QQQ.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
 QQQ.calculate_volatility()
 QQQ.calculate_rsi()
+QQQ.plot_bollinger_bands()
+QQQ.mplf_plot_bollinger_bands()
 QQQ.df_to_csv()
 QQQ.daily_pcd()
 
