@@ -13,6 +13,10 @@ SPY.calculate_volatility()
 SPY.calculate_rsi()
 SPY.df_to_csv()
 SPY.daily_pcd()
+SPY.plot_bollinger_bands()
+print(SPY.data)
+SPY.mplf_plot_bollinger_bands()
+print(SPY.data)
 
 # Testing with 1min interval QQQ
 stock_symbol = 'QQQ' 

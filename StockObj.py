@@ -9,10 +9,10 @@ class StockData:
     ALPHA_URL = 'https://www.alphavantage.co/query'
 
     def __init__(self, api_key, symbol='SPY', interval='Daily'):
-        self.symbol = symbol        # Stock Ticker
-        self.api_key = api_key      # API key
-        self.data = None            # Dataframe containing stock history
-        self.interval = interval            # Interval, 1-60min Intradat or Daily
+        self.symbol = symbol                # Stock Ticker
+        self.api_key = api_key              # API key
+        self.data = pd.DataFrame()          # Dataframe containing stock history
+        self.interval = interval            # Interval, 1-60min Intraday or Daily
 
     def get_stock_data(self):
 
@@ -107,6 +107,43 @@ class StockData:
         plt.show()
         
         return daily_dataframe
+    
+    def calculate_bollinger_bands(self, window=20, num_std=2):
+        # Moving average
+        self.data['Move_avg'] = self.data['Close'].rolling(window=window).mean()
+
+        # Standard deviation
+        self.data['Std_dev'] = self.data['Close'].rolling(window=window).std()
+
+        # Upper and lower Bollinger Bands
+        self.data['BB_up'] = self.data['Move_avg'] + (num_std * self.data['Std_dev'])
+        self.data['BB_low'] = self.data['Move_avg'] - (num_std * self.data['Std_dev'])
+
+        return self.data[['BB_up', 'BB_low']]   #Return the new entries
+    
+    def plot_bollinger_bands(self, window=20, num_std=2):   # Basic Bollinger band plot with mpl
+        self.calculate_bollinger_bands(window, num_std)     # Add the needed BB entries if not there yet
+        #   Plot the new Bollinger bands
+        plt.figure(figsize=(10, 6))
+        plt.plot(self.data.index, self.data['Close'], label='Close Price', color='blue')
+        plt.plot(self.data.index, self.data['Move_avg'], label='Moving Average', color='orange')
+        plt.plot(self.data.index, self.data['BB_up'], label='Upper Bollinger Band', color='green', linestyle='dashed')
+        plt.plot(self.data.index, self.data['BB_low'], label='Lower Bollinger Band', color='red', linestyle='dashed')
+        plt.title('Bollinger Bands')
+        plt.xlabel('Date')
+        plt.ylabel('Price')
+        plt.legend()
+        plt.grid(True)
+        plt.show()
+
+    def mplf_plot_bollinger_bands(self, window=20, num_std=2, **kwargs):
+        self.calculate_bollinger_bands(window, num_std)                 # Add the needed BB entries if not there yet
+
+        add_plot = mpf.make_addplot(self.data[['BB_up', 'BB_low']])     # Forces mplf to recognize BB entries
+
+        self.plot_mplfinance(addplot=add_plot, **kwargs)                # Use our owm mplf function that passes in new data
+
+    
 
     def df_to_csv(self, filename='AllData.csv'):
         if not os.path.exists('DataFiles'): #Create dir to store output data if does not exist
