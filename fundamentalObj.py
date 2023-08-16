@@ -13,7 +13,7 @@ class CompFundamentals:
         self.api_key = api_key
         self.fundamentals = None
 
-    def get_fundamental_data(self):
+    def fetch_fundamental_data(self):
         params = {
             'function': 'OVERVIEW',
             'symbol': self.symbol,
@@ -35,7 +35,7 @@ if __name__ == '__main__':
     company_symbol = 'J'
     
     fund_test = CompFundamentals(company_symbol, API_KEY)
-    fund_test.get_fundamental_data()
+    fund_test.fetch_fundamental_data()
 
     if fund_test.fundamentals is not None:
         print("Company Fundamentals:")

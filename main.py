@@ -6,7 +6,7 @@ with open(".APIkeys", 'r') as file:
 # Testing with Daily SPY
 stock_symbol = 'SPY'   
 SPY = StockData(API_KEY, stock_symbol)
-SPY.get_stock_data()
+SPY.fetch_stock_data()
 SPY.plot_prices()
 SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
 SPY.calculate_volatility()
@@ -22,7 +22,7 @@ print(SPY.data)
 stock_symbol = 'QQQ' 
 interval = '1min'  
 QQQ = StockData(API_KEY, stock_symbol, interval)
-QQQ.get_stock_data()
+QQQ.fetch_stock_data()
 QQQ.plot_prices()
 QQQ.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
 QQQ.calculate_volatility()

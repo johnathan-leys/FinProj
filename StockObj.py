@@ -17,7 +17,7 @@ class StockData:
         self.interval = interval            # Interval, 1-60min Intraday or Daily
         self.metadata = None
 
-    def get_stock_data(self):
+    def fetch_stock_data(self):
 
         if(self.interval == 'Daily'):       # Different calls for daily vs intraday
             params = {
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     stock_symbol = 'AAPL'  
     
     SPY = StockData(API_KEY, stock_symbol)
-    SPY.get_stock_data()
+    SPY.fetch_stock_data()
    
     SPY.plot_prices()
     SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
