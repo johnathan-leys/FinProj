@@ -1,3 +1,5 @@
+#   This file contains the StockData class with basic functions for fetching and analyzing stock data
+
 import requests
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -13,6 +15,7 @@ class StockData:
         self.api_key = api_key              # API key
         self.data = pd.DataFrame()          # Dataframe containing stock history
         self.interval = interval            # Interval, 1-60min Intraday or Daily
+        self.metadata = None
 
     def get_stock_data(self):
 
@@ -32,6 +35,7 @@ class StockData:
 
         response = requests.get(self.ALPHA_URL, params=params)
         jdata = response.json()
+        self.metadata = jdata.get('Meta Data', {})
         jdata =  jdata['Time Series ({})'.format(self.interval)]
         self.data = pd.DataFrame.from_dict(jdata, orient='index')
         self.data.index = pd.to_datetime(self.data.index)
@@ -129,6 +133,8 @@ class StockData:
         plt.plot(self.data.index, self.data['Move_avg'], label='Moving Average', color='orange')
         plt.plot(self.data.index, self.data['BB_up'], label='Upper Bollinger Band', color='green', linestyle='dashed')
         plt.plot(self.data.index, self.data['BB_low'], label='Lower Bollinger Band', color='red', linestyle='dashed')
+        plt.fill_between(self.data.index, self.data['BB_up'], self.data['BB_low'], color='lightgray', alpha=0.5)
+    
         plt.title('Bollinger Bands')
         plt.xlabel('Date')
         plt.ylabel('Price')
