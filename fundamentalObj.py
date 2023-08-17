@@ -3,6 +3,7 @@
 import requests
 import mplfinance as mpf
 import os
+import csv
 
 class CompFundamentals:
 
@@ -84,8 +85,26 @@ class CompFundamentals:
         self.earnings = jdata if isinstance(jdata, dict) else None
         return self.earnings
     
-  
-    
+    def to_CSV(self, filename= 'Fundamentals.csv'):       #capitalized to avoid any confusion with the pd funcstion
+
+        if not os.path.exists('DataFiles'): #Create dir to store output data if does not exist
+            os.makedirs('DataFiles')
+
+        filename = 'DataFiles/' + self.symbol + filename
+        
+        with open(filename, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            
+            # Write header row
+            writer.writerow(['Attribute', 'Value'])
+            
+            # Write company overview data
+            if self.overview is not None:
+                for key, value in self.overview.items():
+                    writer.writerow([key, value])
+            
+            
+                       
 
 if __name__ == '__main__':
 
@@ -118,3 +137,5 @@ if __name__ == '__main__':
     print('-------Earnings--------------------------')
     fund_test.fetch_eps()
     print(fund_test.earnings['annualEarnings'][0])
+
+    fund_test.to_CSV()
