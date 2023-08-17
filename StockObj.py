@@ -35,9 +35,9 @@ class StockData:
 
         response = requests.get(self.ALPHA_URL, params=params)
         jdata = response.json()
-        self.metadata = jdata.get('Meta Data', {})
+        self.metadata = jdata.get('Meta Data', {})                  # Strip metadata from json
         jdata =  jdata['Time Series ({})'.format(self.interval)]
-        self.data = pd.DataFrame.from_dict(jdata, orient='index')
+        self.data = pd.DataFrame.from_dict(jdata, orient='index')   # Convert financial data to dataframe
         self.data.index = pd.to_datetime(self.data.index)
 
         # Rename to work with mplf
