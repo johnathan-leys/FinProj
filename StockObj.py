@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import mplfinance as mpf
 import numpy as np
 import os
+import pandas_ta as ta
 
 class StockData:
     ALPHA_URL = 'https://www.alphavantage.co/query'
@@ -149,8 +150,6 @@ class StockData:
 
         self.plot_mplfinance(addplot=add_plot, **kwargs)                # Use our owm mplf function that passes in new data
 
-    
-
     def df_to_csv(self, filename='AllData.csv'):
         if not os.path.exists('DataFiles'): #Create dir to store output data if does not exist
             os.makedirs('DataFiles')
@@ -160,6 +159,9 @@ class StockData:
         else:
             self.data.to_csv('DataFiles/' + filename)
 
+    # Next functions will be some more indicators, mostly utilizing pandas_ta
+
+    
 
 if __name__ == '__main__':
     # If you clone this repo, be sure to update the location of your own API key
