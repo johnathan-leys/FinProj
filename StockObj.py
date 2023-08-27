@@ -161,6 +161,9 @@ class StockData:
 
     # Next functions will be some more indicators, mostly utilizing pandas_ta
 
+    # Exponential Moving Average using pandas_ta
+    def calculate_ema(self, window = 20):
+        self.data['EMA'] = ta.ema(self.data['Close'], period=window)
     
 
 if __name__ == '__main__':
@@ -178,9 +181,13 @@ if __name__ == '__main__':
     SPY.calculate_volatility()
     SPY.calculate_rsi()
 
-    SPY.df_to_csv()
+    SPY.calculate_ema()
 
     SPY.daily_pcd()
+
+    SPY.df_to_csv()
+
+    
 
     print(SPY.data)
 
