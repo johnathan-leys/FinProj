@@ -1,4 +1,5 @@
-#   This file contains the StockData class with basic functions for fetching and analyzing stock data
+#   This file contains the StockData class with custom functions for fetching and analyzing
+#   stock data, stored in self.data.  
 
 import requests
 import pandas as pd
@@ -6,7 +7,6 @@ import matplotlib.pyplot as plt
 import mplfinance as mpf
 import numpy as np
 import os
-import pandas_ta as ta
 
 class StockData:
     ALPHA_URL = 'https://www.alphavantage.co/query'
@@ -151,19 +151,14 @@ class StockData:
         self.plot_mplfinance(addplot=add_plot, **kwargs)                # Use our owm mplf function that passes in new data
 
     def df_to_csv(self, filename='AllData.csv'):
-        if not os.path.exists('DataFiles'): #Create dir to store output data if does not exist
+        if not os.path.exists('DataFiles'): # Create dir to store output data if does not exist
             os.makedirs('DataFiles')
 
         if(filename == 'AllData.csv'):
             self.data.to_csv('DataFiles/' + self.symbol + 'AllData.csv')
         else:
             self.data.to_csv('DataFiles/' + filename)
-
-    # Next functions will be some more indicators, mostly utilizing pandas_ta
-
-    # Exponential Moving Average using pandas_ta
-    def calculate_ema(self, window = 20):
-        self.data['EMA'] = ta.ema(self.data['Close'], period=window)
+    
     
 
 if __name__ == '__main__':
@@ -171,7 +166,7 @@ if __name__ == '__main__':
     with open(".APIkeys", 'r') as file:
         API_KEY = file.readline().strip().split()[0]
 
-    stock_symbol = 'AAPL'  
+    stock_symbol = 'SPY'  
     
     SPY = StockData(API_KEY, stock_symbol)
     SPY.fetch_stock_data()
@@ -180,8 +175,6 @@ if __name__ == '__main__':
     SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
     SPY.calculate_volatility()
     SPY.calculate_rsi()
-
-    SPY.calculate_ema()
 
     SPY.daily_pcd()
 
