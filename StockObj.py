@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import mplfinance as mpf
 import numpy as np
 import os
+import pandas_ta as ta
+
+from Strategies import *    # Custom Strategies for pandas_ta
 
 class StockData:
     ALPHA_URL = 'https://www.alphavantage.co/query'
@@ -158,6 +161,10 @@ class StockData:
             self.data.to_csv('DataFiles/' + self.symbol + 'AllData.csv')
         else:
             self.data.to_csv('DataFiles/' + filename)
+
+    
+    def execute_strategy(self, strategy = ta.CommonStrategy):   #   Custom strategies are defined in Strategies.py. 
+        self.data.ta.strategy(strategy)
     
     
 
@@ -175,12 +182,8 @@ if __name__ == '__main__':
     SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
     SPY.calculate_volatility()
     SPY.calculate_rsi()
-
     SPY.daily_pcd()
-
     SPY.df_to_csv()
-
-    
 
     print(SPY.data)
 
