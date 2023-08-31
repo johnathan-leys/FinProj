@@ -23,3 +23,4 @@ This project uses several paackages and libraries that need to be installed. The
 - numpy
 - os
 - pandas_ta
+- yahoo_fin
