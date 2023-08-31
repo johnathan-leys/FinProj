@@ -12,4 +12,14 @@ This is a personal project I am creating to assist my learning and implement ski
 I plan to start simple and add each feature as I learn more about the space. Feel free to follow along or play with the project if you find it interesting or useful!
 
 ## API
-The project is initially created to use the free tier of AlphaVantage and is currently only set up to utilize the AlphaVantage API.
+The project is initially created to use the free tier of AlphaVantage. Options support is set up using the yahoo_fin library and API.
+
+## Requirements
+This project uses several paackages and libraries that need to be installed. The ones isted below can all be installed using 	```pip```.
+- requests
+- pandas
+- matplotlib
+- mplfinance
+- numpy
+- os
+- pandas_ta
