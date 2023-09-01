@@ -30,6 +30,15 @@ obv_vwma50_strat = ta.Strategy(   #
         ]
 )
 
+atr_kc_macd = ta.Strategy(      #   Examine volatility with ATR, KC. Combine with mavg convergence.
+    name="ATR, KC, and MACD",
+    description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
+    ta=[
+        {"kind": "atr", "length": 14},
+        {"kind": "kc", "length": 20, "mult": 2.0},
+        {"kind": "macd", "fast": 12, "slow": 26, "signal": 9}
+    ]
+)
 
 
 if __name__ == '__main__':
@@ -45,7 +54,8 @@ if __name__ == '__main__':
     print(NVDA.data)
     NVDA.execute_strategy(obv_vwma50_strat)
     NVDA.execute_strategy(CustomStrategy)
-
+    NVDA.execute_strategy(atr_kc_macd)
+    NVDA.df_to_csv()
     print(NVDA.data)
 
 
