@@ -21,6 +21,14 @@ CustomStrategy = ta.Strategy(   # Example from pandas-ta README
     ]
 )
 
+log_return = ta.Strategy(      #   find log return with pandas_ta
+    name="ATR, KC, and MACD",
+    description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
+    ta = [
+            {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
+        ]
+)
+
 obv_vwma50_strat = ta.Strategy(   # 
     name="OBV, VWMA",
     description="On balance volume and volume-weighted moving average",
@@ -41,6 +49,7 @@ atr_kc_macd = ta.Strategy(      #   Examine volatility with ATR, KC. Combine wit
 )
 
 
+
 if __name__ == '__main__':
 
     # If you clone this repo, be sure to update the location of your own API key
@@ -52,6 +61,7 @@ if __name__ == '__main__':
     NVDA.fetch_stock_data()
 
     print(NVDA.data)
+    NVDA.execute_strategy(log_return)
     NVDA.execute_strategy(obv_vwma50_strat)
     NVDA.execute_strategy(CustomStrategy)
     NVDA.execute_strategy(atr_kc_macd)
