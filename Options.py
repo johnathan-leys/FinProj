@@ -36,6 +36,8 @@ class OptionsData:
 
         self.get_puts().to_csv('DataFiles/' + self.symbol + 'puts.csv')
         self.get_calls().to_csv('DataFiles/' + self.symbol + 'calls.csv')
+
+    #   Need to add: Greeks, pricing (basic), and custom dsp (FFT, etc)
  
 
 

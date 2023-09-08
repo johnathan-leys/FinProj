@@ -21,6 +21,14 @@ CustomStrategy = ta.Strategy(   # Example from pandas-ta README
     ]
 )
 
+log_return = ta.Strategy(      #   find log return with pandas_ta
+    name="ATR, KC, and MACD",
+    description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
+    ta = [
+            {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
+        ]
+)
+
 obv_vwma50_strat = ta.Strategy(   # 
     name="OBV, VWMA",
     description="On balance volume and volume-weighted moving average",
@@ -28,6 +36,16 @@ obv_vwma50_strat = ta.Strategy(   #
             {"kind": "obv"},
             {"kind": "vwma", "length":50, "prefix": "VWMA_{}".format(50)}
         ]
+)
+
+atr_kc_macd = ta.Strategy(      #   Examine volatility with ATR, KC. Combine with mavg convergence.
+    name="ATR, KC, and MACD",
+    description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
+    ta=[
+        {"kind": "atr", "length": 14},
+        {"kind": "kc", "length": 20, "mult": 2.0},
+        {"kind": "macd", "fast": 12, "slow": 26, "signal": 9}
+    ]
 )
 
 
@@ -43,9 +61,11 @@ if __name__ == '__main__':
     NVDA.fetch_stock_data()
 
     print(NVDA.data)
+    NVDA.execute_strategy(log_return)
     NVDA.execute_strategy(obv_vwma50_strat)
     NVDA.execute_strategy(CustomStrategy)
-
+    NVDA.execute_strategy(atr_kc_macd)
+    NVDA.df_to_csv()
     print(NVDA.data)
 
 
