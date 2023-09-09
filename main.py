@@ -5,18 +5,18 @@ with open(".APIkeys", 'r') as file:
 
 # Testing with Daily SPY
 stock_symbol = 'SPY'   
-SPY = StockData(API_KEY, stock_symbol)
-SPY.fetch_stock_data()
-SPY.plot_prices()
-SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
-SPY.calculate_volatility()
-SPY.calculate_rsi()
-SPY.df_to_csv()
-SPY.daily_pcd()
-SPY.plot_bollinger_bands()
-SPY.mplf_plot_bollinger_bands()
-SPY.df_to_csv()
-print(SPY.data)
+AAPL = StockData(API_KEY, stock_symbol)
+AAPL.fetch_stock_data()
+AAPL.plot_prices()
+AAPL.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
+AAPL.calculate_volatility()
+AAPL.calculate_rsi()
+AAPL.df_to_csv()
+AAPL.daily_pcd()
+AAPL.plot_bollinger_bands()
+AAPL.mplf_plot_bollinger_bands()
+AAPL.df_to_csv()
+print(AAPL.data)
 
 # Testing with 1min interval QQQ
 stock_symbol = 'QQQ' 

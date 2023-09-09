@@ -5,6 +5,7 @@ import requests
 import pandas as pd
 import matplotlib.pyplot as plt
 import mplfinance as mpf
+import statistics
 import numpy as np
 import os
 import pandas_ta as ta
@@ -20,6 +21,13 @@ class StockData:
         self.data = pd.DataFrame()          # Dataframe containing stock history
         self.interval = interval            # Interval, 1-60min Intraday or Daily
         self.metadata = None
+        self.sentiment_data = {             # Dict to store
+            'ticker_sentiment': [],         # List to store sentiment data from each article
+            'average': None,
+            'median': None,
+            'min': None,
+            'max': None,
+        }
 
     def fetch_stock_data(self):
 
@@ -153,6 +161,39 @@ class StockData:
 
         self.plot_mplfinance(addplot=add_plot, **kwargs)                # Use our owm mplf function that passes in new data
 
+    def fetch_sentiments(self, num_results = 100, sort = 'RELEVANCE'):         # Senitment analys from Alphavantage for our ticker
+        params = {
+            'function': 'NEWS_SENTIMENT',
+            'tickers': self.symbol,
+            'sort': sort,
+            'limit': num_results,
+            'apikey': self.api_key
+        }
+
+        response = requests.get(self.ALPHA_URL, params=params)
+        jdata = response.json()
+        
+        if 'feed' in jdata:
+            feed = jdata['feed']
+            sentiment_scores = []
+        else:
+            print("No valid data detected")
+            return
+
+        # Loop through each article, get the sentiment from matching ticker
+        for article in feed:
+                for ticker_sentiment in article.get('ticker_sentiment', []):
+                    if ticker_sentiment['ticker'] == self.symbol:       # ensure we dont get sentiment for entire article/other tickers
+                        sentiment_scores.append(float(ticker_sentiment['ticker_sentiment_score']))
+
+        self.sentiment_data['ticker_sentiment'] = sentiment_scores
+        self.sentiment_data['average'] = statistics.mean(sentiment_scores)  # basic stats for now
+        self.sentiment_data['median'] = statistics.median(sentiment_scores)
+        self.sentiment_data['min'] = min(sentiment_scores)
+        self.sentiment_data['max'] = max(sentiment_scores)
+
+
+
     def df_to_csv(self, filename='AllData.csv'):
         if not os.path.exists('DataFiles'): # Create dir to store output data if does not exist
             os.makedirs('DataFiles')
@@ -173,19 +214,21 @@ if __name__ == '__main__':
     with open(".APIkeys", 'r') as file:
         API_KEY = file.readline().strip().split()[0]
 
-    stock_symbol = 'SPY'  
+    stock_symbol = 'AAPL'  
     
-    SPY = StockData(API_KEY, stock_symbol)
-    SPY.fetch_stock_data()
+    AAPL = StockData(API_KEY, stock_symbol)
+    AAPL.fetch_stock_data()
    
-    SPY.plot_prices()
-    SPY.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
-    SPY.calculate_volatility()
-    SPY.calculate_rsi()
-    SPY.daily_pcd()
-    SPY.df_to_csv()
-
-    print(SPY.data)
+    AAPL.plot_prices()
+    AAPL.plot_mplfinance(style='nightclouds', mav=(5, 20), volume=True)
+    AAPL.calculate_volatility()
+    AAPL.calculate_rsi()
+    AAPL.daily_pcd()
+    AAPL.df_to_csv()
+    AAPL.fetch_sentiments()
+    
+    print(AAPL.sentiment_data)
+    print(AAPL.data)
 
 
 
