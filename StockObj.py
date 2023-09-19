@@ -56,6 +56,37 @@ class StockData:
         self.data.rename(columns={'1. open': 'Open', '2. high': 'High', '3. low': 'Low', '4. close': 'Close', '5. volume': 'Volume'}, inplace=True)
         self.data = self.data.astype(float)
 
+    def fetch_sentiments(self, num_results = 100, sort = 'RELEVANCE'):         # Senitment analys from Alphavantage for our ticker
+        params = {
+            'function': 'NEWS_SENTIMENT',
+            'tickers': self.symbol,
+            'sort': sort,
+            'limit': num_results,
+            'apikey': self.api_key
+        }
+
+        response = requests.get(self.ALPHA_URL, params=params)
+        jdata = response.json()
+        
+        if 'feed' in jdata:
+            feed = jdata['feed']
+            sentiment_scores = []
+        else:
+            print("No valid data detected")
+            return
+
+        # Loop through each article, get the sentiment from matching ticker
+        for article in feed:
+                for ticker_sentiment in article.get('ticker_sentiment', []):
+                    if ticker_sentiment['ticker'] == self.symbol:       # ensure we dont get sentiment for entire article/other tickers
+                        sentiment_scores.append(float(ticker_sentiment['ticker_sentiment_score']))
+
+        self.sentiment_data['ticker_sentiment'] = sentiment_scores
+        self.sentiment_data['average'] = statistics.mean(sentiment_scores)  # basic stats for now
+        self.sentiment_data['median'] = statistics.median(sentiment_scores)
+        self.sentiment_data['min'] = min(sentiment_scores)
+        self.sentiment_data['max'] = max(sentiment_scores)
+
     def plot_prices(self):    # Basic Matplotlib plot
         plt.figure(figsize=(12, 6))
         plt.plot(self.data.index, self.data['Close'])
@@ -160,38 +191,6 @@ class StockData:
         add_plot = mpf.make_addplot(self.data[['BB_up', 'BB_low']])     # Forces mplf to recognize BB entries
 
         self.plot_mplfinance(addplot=add_plot, **kwargs)                # Use our owm mplf function that passes in new data
-
-    def fetch_sentiments(self, num_results = 100, sort = 'RELEVANCE'):         # Senitment analys from Alphavantage for our ticker
-        params = {
-            'function': 'NEWS_SENTIMENT',
-            'tickers': self.symbol,
-            'sort': sort,
-            'limit': num_results,
-            'apikey': self.api_key
-        }
-
-        response = requests.get(self.ALPHA_URL, params=params)
-        jdata = response.json()
-        
-        if 'feed' in jdata:
-            feed = jdata['feed']
-            sentiment_scores = []
-        else:
-            print("No valid data detected")
-            return
-
-        # Loop through each article, get the sentiment from matching ticker
-        for article in feed:
-                for ticker_sentiment in article.get('ticker_sentiment', []):
-                    if ticker_sentiment['ticker'] == self.symbol:       # ensure we dont get sentiment for entire article/other tickers
-                        sentiment_scores.append(float(ticker_sentiment['ticker_sentiment_score']))
-
-        self.sentiment_data['ticker_sentiment'] = sentiment_scores
-        self.sentiment_data['average'] = statistics.mean(sentiment_scores)  # basic stats for now
-        self.sentiment_data['median'] = statistics.median(sentiment_scores)
-        self.sentiment_data['min'] = min(sentiment_scores)
-        self.sentiment_data['max'] = max(sentiment_scores)
-
 
 
     def df_to_csv(self, filename='AllData.csv'):

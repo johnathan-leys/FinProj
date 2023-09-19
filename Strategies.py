@@ -1,5 +1,5 @@
-#   This file contains more complex trading strategies than the simple ones built into the StockData
-#   class. The strategies typically still modify the data in the base StockData class.
+#   This file contains more complex trading strategies than the simple ones built into the StockData class.
+# The ta.Strategy obj is used.
 
 from StockObj import *
 
@@ -22,8 +22,8 @@ CustomStrategy = ta.Strategy(   # Example from pandas-ta README
 )
 
 log_return = ta.Strategy(      #   find log return with pandas_ta
-    name="ATR, KC, and MACD",
-    description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
+    name="Log Return",
+    description="Log return using pandas_ta",
     ta = [
             {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
         ]
@@ -48,6 +48,16 @@ atr_kc_macd = ta.Strategy(      #   Examine volatility with ATR, KC. Combine wit
     ]
 )
 
+cycle_indicators = ta.Strategy(
+    name="Cycle Indicators",
+    description="Custom strategy with Cycle Indicators: Schaff trend cycle, Fisher transform L9, Triple Exp MAg",
+    ta=[
+        {"kind": "stc", "length": 14, "cycle_length": 10, "smooth1": 3, "smooth2": 3},
+        {"kind": "fisher", "length": 9},
+        {"kind": "trix", "length": 15}
+    ]
+)
+
 
 
 if __name__ == '__main__':
@@ -65,6 +75,7 @@ if __name__ == '__main__':
     NVDA.execute_strategy(obv_vwma50_strat)
     NVDA.execute_strategy(CustomStrategy)
     NVDA.execute_strategy(atr_kc_macd)
+    NVDA.execute_strategy(cycle_indicators)
     NVDA.df_to_csv()
     print(NVDA.data)
 
