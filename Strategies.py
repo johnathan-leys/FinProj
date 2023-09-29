@@ -10,10 +10,10 @@ All_Strategy = ta.AllStrategy   # Requires TA-Lib
 
 CustomStrategy = ta.Strategy(   # Example from pandas-ta README
     name="Momo and Volatility",
-    description="SMA 50,200, BBANDS, RSI, MACD and Volume SMA 20",
+    description="SMA 30,75, BBANDS, RSI, MACD and Volume SMA 20",
     ta=[
-        {"kind": "sma", "length": 50},
-        {"kind": "sma", "length": 200},
+        {"kind": "sma", "length": 30},
+        {"kind": "sma", "length": 99},
         {"kind": "bbands", "length": 20},
         {"kind": "rsi"},
         {"kind": "macd", "fast": 8, "slow": 21},
