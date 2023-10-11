@@ -21,7 +21,7 @@ CustomStrategy = ta.Strategy(   # Example from pandas-ta README
     ]
 )
 
-obv_vwma50_strat = ta.Strategy(   # 
+obv_vwma50_strat = ta.Strategy(
     name="OBV, VWMA",
     description="On balance volume and volume-weighted moving average",
     ta = [
