@@ -30,6 +30,14 @@ obv_vwma50_strat = ta.Strategy(
         ]
 )
 
+log_return = ta.Strategy(      #   find log return with pandas_ta
+    name="Log Return",
+    description="Log return using pandas_ta",
+    ta = [
+            {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
+        ]
+)
+
 atr_kc_macd = ta.Strategy(      #   Examine volatility with ATR, KC. Combine with mavg convergence.
     name="ATR, KC, and MACD",
     description="Custom strategy with ATR, Keltner Channels, and MACD indicators",
