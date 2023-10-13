@@ -205,6 +205,12 @@ class StockData:
     
     def execute_strategy(self, strategy = ta.CommonStrategy):   #   Custom strategies are defined in Strategies.py. 
         self.data.ta.strategy(strategy)
+
+    def fetch_and_process(self, symbol):
+        self.symbol = symbol
+        self.fetch_stock_data()
+        self.calculate_volatility()
+        self.calculate_rsi()
     
     
 
