@@ -21,20 +21,20 @@ CustomStrategy = ta.Strategy(   # Example from pandas-ta README
     ]
 )
 
-log_return = ta.Strategy(      #   find log return with pandas_ta
-    name="Log Return",
-    description="Log return using pandas_ta",
-    ta = [
-            {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
-        ]
-)
-
-obv_vwma50_strat = ta.Strategy(   # 
+obv_vwma50_strat = ta.Strategy(
     name="OBV, VWMA",
     description="On balance volume and volume-weighted moving average",
     ta = [
             {"kind": "obv"},
             {"kind": "vwma", "length":50, "prefix": "VWMA_{}".format(50)}
+        ]
+)
+
+log_return = ta.Strategy(      #   find log return with pandas_ta
+    name="Log Return",
+    description="Log return using pandas_ta",
+    ta = [
+            {"kind": "log_return", "close": "Close", "cumulative": False, "append": True}
         ]
 )
 
