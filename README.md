@@ -15,7 +15,7 @@ I plan to start simple and add each feature as I learn more about the space. Fee
 The project is initially created to use the free tier of AlphaVantage. Options support is set up using the yahoo_fin library and API.
 
 ## Requirements
-This project uses several paackages and libraries that need to be installed. The ones isted below can all be installed using 	```pip```.
+This project uses several paackages and libraries that need to be installed. The ones listed below can all be installed using 	```pip```.
 - requests
 - pandas
 - matplotlib
