@@ -47,6 +47,7 @@ class StockData:
 
         response = requests.get(self.ALPHA_URL, params=params)
         jdata = response.json()
+        #print(jdata)  limit of 25 requests with free
         self.metadata = jdata.get('Meta Data', {})                  # Strip metadata from json
         jdata =  jdata['Time Series ({})'.format(self.interval)]
         self.data = pd.DataFrame.from_dict(jdata, orient='index')   # Convert financial data to dataframe
