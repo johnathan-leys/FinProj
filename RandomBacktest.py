@@ -38,7 +38,6 @@ def backtest_custom_strategy(stock_symbol, api_key):
 
     return stock_data.data
 
-# For demonstration purposes, you'll need to replace 'YOUR_API_KEY' with your actual API key
 if __name__ == '__main__':
     with open(".APIkeys", 'r') as file:
         API_KEY = file.readline().strip().split()[0]
